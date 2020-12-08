@@ -82,6 +82,7 @@ function ScaleEmittersParam(Emitters, param, minRange, maxRange)
 end
 
 function CreateBuildCubeThread(unitBeingBuilt, builder, OnBeingBuiltEffectsBag)
+    unitBeingBuilt.BuildingCube = true
     local bp = unitBeingBuilt:GetBlueprint()
     local mul = 1.15
     local xPos, yPos, zPos = unpack(unitBeingBuilt:GetPosition())
@@ -148,6 +149,7 @@ function CreateBuildCubeThread(unitBeingBuilt, builder, OnBeingBuiltEffectsBag)
         lComplete = cComplete
         cComplete = unitBeingBuilt:GetFractionComplete()
     end
+    unitBeingBuilt.BuildingCube = nil
 end
 
 function CreateUEFUnitBeingBuiltEffects(builder, unitBeingBuilt, BuildEffectsBag)
@@ -817,18 +819,7 @@ function CreateSeraphimBuildThread(unitBeingBuilt, builder, EffectsBag, scaleFac
         end
     end
 
-    -- The flash can now be seen only by the player owning the building, his allies or enemies who
-    -- have a visual of the building.
-    local unitsArmy = unitBeingBuilt.Army
-    local focusArmy = GetFocusArmy()
-    if focusArmy == -1 or IsAlly(unitsArmy, focusArmy) then
-        CreateLightParticle(unitBeingBuilt, -1, unitsArmy, unitBeingBuilt:GetFootPrintSize() * 7, 8, 'glow_02', 'ramp_blue_22')
-    elseif IsEnemy(unitsArmy, focusArmy) then
-        local blip = unitBeingBuilt:GetBlip(focusArmy)
-        if blip ~= nil and blip:IsSeenNow(focusArmy) then
-            CreateLightParticle(unitBeingBuilt, -1, unitsArmy, unitBeingBuilt:GetFootPrintSize() * 7, 8, 'glow_02', 'ramp_blue_22')
-        end
-    end
+    CreateLightParticleIntel(unitBeingBuilt, -1, unitBeingBuilt.Army, unitBeingBuilt:GetFootPrintSize() * 7, 8, 'glow_02', 'ramp_blue_22')
 
     WaitSeconds(0.5)
     BuildBaseEffect:Destroy()
