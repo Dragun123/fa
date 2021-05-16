@@ -481,6 +481,7 @@ UnitBlueprint {
             },
             Icon = 'ntt',
             Name = '<LOC enhancements_0085>Nanite Torpedo Launcher',
+            NewSonarRadius = 60,
             Slot = 'RCH',
             UpgradeEffectBones = {
                 'Chest_Right',
@@ -702,14 +703,14 @@ UnitBlueprint {
     Intel = {
         ActiveIntel = {
             Omni = true,
-            Sonar = true,
         },
         Cloak = true,
+        Sonar = true,
+        SonarRadius = 26,
         FreeIntel = false,
         OmniRadius = 26,
         RadarStealth = true,
         ReactivateTime = 2,
-        SonarRadius = 60,
         SonarStealth = true,
         VisionRadius = 26,
         WaterVisionRadius = 26,
@@ -872,11 +873,7 @@ UnitBlueprint {
             RateOfFire = 1,
             TargetCheckInterval = 0.5,
             TargetPriorities = {
-                'MOBILE BOMB',
-                'MOBILE EXPERIMENTAL',
-                'MOBILE TECH3',
-                'MOBILE TECH2',
-                'MOBILE TECH1',
+                'MOBILE',
                 'COMMAND',
                 '(STRUCTURE * DEFENSE - ANTIMISSILE)',
                 '(ALLUNITS - SPECIALLOWPRI)',
@@ -962,7 +959,6 @@ UnitBlueprint {
             TargetCheckInterval = 0.1,
             TargetPriorities = {
                 'MOBILE EXPERIMENTAL',
-                'MOBILE BOMB',
                 'MOBILE TECH3',
                 'MOBILE TECH2',
                 'MOBILE TECH1',
@@ -1049,7 +1045,6 @@ UnitBlueprint {
             TargetCheckInterval = 0.1,
             TargetPriorities = {
                 'MOBILE EXPERIMENTAL',
-                'MOBILE BOMB',
                 'MOBILE TECH3',
                 'MOBILE TECH2',
                 '(STRUCTURE * DEFENSE - ANTIMISSILE)',
@@ -1184,7 +1179,6 @@ UnitBlueprint {
             TargetPriorities = {
                 'COMMAND',
                 'MOBILE EXPERIMENTAL',
-                'MOBILE BOMB',
                 'MOBILE TECH3',
                 'MOBILE TECH2',
                 '(STRUCTURE * DEFENSE - ANTIMISSILE)',

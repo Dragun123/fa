@@ -20,15 +20,13 @@ local teamIcons = {
 ACUButton = Class(Group) {
     __init = function(self, parent, enabled)
         Group.__init(self, parent)
-        self.Height:Set(10)
-        self.Width:Set(8)
+        LayoutHelpers.SetDimensions(self, 8, 10)
 
         self.enabled = enabled
 
         -- Provides the solid-colour filling of the little ACU. Default transparent.
         local colourBmp = Bitmap(self)
-        colourBmp.Height:Set(10)
-        colourBmp.Width:Set(8)
+        LayoutHelpers.SetDimensions(colourBmp, 8, 10)
         colourBmp:SetSolidColor('00777777')
         LayoutHelpers.AtLeftTopIn(colourBmp, self)
 
@@ -81,20 +79,26 @@ ACUButton = Class(Group) {
         indicator.Depth:Set(function() return colourBmp.Depth() - 1 end)
         indicator:Hide()
         indicator:DisableHitTest()
-        indicator.Play = function(self)
-            self:SetAlpha(1)
-            self:Show()
-            self:SetNeedsFrameUpdate(true)
-            self.time = 0
-            self.OnFrame = function(control, time)
+        indicator.Play = function(this)
+            if not self:IsEnabled() then
+                return
+            end
+            this:SetAlpha(1)
+            this:Show()
+            this:SetNeedsFrameUpdate(true)
+            this.time = 0
+            this.OnFrame = function(control, time)
                 control.time = control.time + (time*4)
                 control:SetAlpha(MATH_Lerp(math.sin(control.time), -.5, .5, 0.3, 0.5))
             end
         end
-        indicator.Stop = function(self)
-            self:SetAlpha(0)
-            self:Hide()
-            self:SetNeedsFrameUpdate(false)
+        indicator.Stop = function(this)
+            if not self:IsEnabled() then
+                return
+            end
+            this:SetAlpha(0)
+            this:Hide()
+            this:SetNeedsFrameUpdate(false)
         end
 
         self.indicator = indicator
