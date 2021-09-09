@@ -124,6 +124,7 @@ UnitBlueprint {
         'OVERLAYDIRECTFIRE',
         'TRANSPORTFOCUS',
         'CANNOTUSEAIRSTAGING',
+        'SNIPEMODE',
     },
     CollisionOffsetX = 0,
     CollisionOffsetY = -1.5,
@@ -224,7 +225,7 @@ UnitBlueprint {
         Classification = 'RULEUC_MilitaryAircraft',
         CommandCaps = {
             RULEUCC_Attack = true,
-            RULEUCC_CallTransport = true,
+            RULEUCC_CallTransport = false,
             RULEUCC_Capture = false,
             RULEUCC_Ferry = true,
             RULEUCC_Guard = true,
@@ -284,6 +285,7 @@ UnitBlueprint {
         Class2AttachSize = 2,
         Class3AttachSize = 4,
         TransportClass = 10,
+        Class1Capacity = 16,
     },
     UseOOBTestZoom = 200,
     Veteran = {

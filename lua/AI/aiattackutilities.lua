@@ -254,7 +254,7 @@ function GetBestThreatTarget(aiBrain, platoon, bSkipPathability)
 
     local threatTable = aiBrain:GetThreatsAroundPosition(platoonPosition, 16, true, 'Overall', enemyIndex)
 
-    if table.getn(threatTable) == 0 then
+    if table.empty(threatTable) then
         return false
     end
 
@@ -345,7 +345,7 @@ function GetBestThreatTarget(aiBrain, platoon, bSkipPathability)
         # Determine relative strength of platoon compared to enemy threat
         local enemyThreat = aiBrain:GetThreatAtPosition({threat[1], 0, threat[2]}, EnemyThreatRings, true, ThreatTable[platoon.MovementLayer] or 'AntiSurface')
         if IgnoreCommanderStrength then
-            enemyThreat = enemyThreat - aiBrain:GetThreatAtPosition({threat[1], EnemyThreatRings, threat[2]}, 1, true, 'Commander')
+            enemyThreat = enemyThreat - aiBrain:GetThreatAtPosition({threat[1], 0, threat[2]}, EnemyThreatRings, true, 'Commander')
         end
         #defaults to no threat (threat difference is opposite of platoon threat)
         local threatDiff =  myThreat - enemyThreat

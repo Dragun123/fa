@@ -224,7 +224,7 @@ AttackManager = Class({
                         end
                     end
                 end
-                if table.getn(combineList) > 0 or v.UsePool then
+                if not table.empty(combineList) or v.UsePool then
                     local tempPlatoon
                     if self.Platoons[k].AIName then
                         tempPlatoon = self.brain:CombinePlatoons(combineList, v.AIName)
@@ -304,9 +304,9 @@ AttackManager = Class({
                     if v.FormCallbacks then
                         for cbNum, callback in v.FormCallbacks do
                             if type(callback) == 'function' then
-                                ForkThread(callback, tempPlatoon)
+                                self.Trash:Add(ForkThread(callback, tempPlatoon))
                             else
-                                ForkThread(import(callback[1])[callback[2]], tempPlatoon)
+                                self.Trash:Add(ForkThread(import(callback[1])[callback[2]], tempPlatoon))
                             end
                             --LOG('*AM DEBUG: AM Master Platoon Form callback: ', repr(callback[2]), ' Builder Named: ', repr(v.BuilderName))
                         end

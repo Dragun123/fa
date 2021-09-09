@@ -16,7 +16,7 @@ function GetActionName(action)
     if KeyDescriptions[action] then
         name = LOC(KeyDescriptions[action])
     else
-        name = LOC("<LOC key_binding_0001>No description text") .. ' for action ' .. action
+        name = LOC('<LOC kb_'..action..'>'..action)
     end
     -- check if action is meant to be mapped with a key modifier, e.g. attack vs shift_attack action
     if string.find(action, 'shift_') == 1 then
@@ -29,7 +29,7 @@ function GetDefaultKeyMapName()
     return Prefs.GetFromCurrentProfile("UserKeyMapName") or 'defaultKeyMap.lua'
 end
 
--- stores preset name of UserKeyMap: 'defaultKeyMap.lua' (GPG) or hotbuildKeyMap.lua' (FAF)
+-- stores preset name of UserKeyMap: 'defaultKeyMap.lua' (GPG) or 'hotbuildKeyMap.lua' (FAF) or 'alternatehotbuildKeyMap.lua' (FAF)
 function SetDefaultKeyMapName(preset)
     Prefs.SetToCurrentProfile("UserKeyMapName", preset)
 end
@@ -145,13 +145,13 @@ function ClearUserKeyMap()
     Prefs.SetToCurrentProfile("UserDebugKeyMap", nil)
 end
 
--- resets UserKeyMap in game references file and saves new keybinding preset: 'defaultKeyMap.lua' (GPG) or hotbuildKeyMap.lua' (FAF)
+-- resets UserKeyMap in game references file and saves new keybinding preset: 'defaultKeyMap.lua' (GPG) or hotbuildKeyMap.lua' (FAF) or 'alternatehotbuildKeyMap.lua' (FAF)
 function ResetUserKeyMapTo(newPreset)
     local oldPreset = GetDefaultKeyMapName()
     LOG('Keybindings Preset changed from "' .. oldPreset .. '" to "' .. newPreset .. '"')
     Prefs.SetToCurrentProfile("UserKeyMapName", newPreset)
     local oldKeyMap = Prefs.GetFromCurrentProfile("UserKeyMap")
-    if table.getsize(oldKeyMap) > 0 then
+    if not table.empty(oldKeyMap) then
         LOG('Keybindings Count changed from ' .. table.getsize(oldKeyMap) .. ' to 0')
     end
      -- key maps must be nil until they are save by a user when existing keybinding UI otherwise UI will show incorrect info
@@ -253,14 +253,25 @@ function GenerateHotbuildModifiers()
     local modifiers = {}
 
     for key, info in keyDetails do
-        if info.action["category"] == "hotbuilding" then
+        local cat = info.action["category"]
+        if cat == "hotbuilding" or cat == "hotbuildingAlternative" or cat == "hotbuildingExtra" then
             if key ~= nil then
-                local modKey = "Shift-" .. key
-                local modBinding = keyDetails[modKey]
-                if not modBinding then
-                    modifiers[modKey] =  info.action
+                local shiftModKey = "Shift-" .. key
+                local altModKey = "Alt-" .. key
+                local shiftModBinding = keyDetails[shiftModKey]
+                local altModBinding = keyDetails[altModKey]
+                if not shiftModBinding and not altModBinding then
+                    modifiers[shiftModKey] =  info.action
+                    modifiers[altModKey] =  info.action
+                elseif not shiftModBinding then
+                    modifiers[shiftModKey] =  info.action
+                    WARN('Hotbuild key '..altModKey..' is already bound to action "'..altModBinding.name..'" under "'..altModBinding.category..'" category')
+                elseif not altModBinding then
+                    modifiers[altModKey] =  info.action
+                    WARN('Hotbuild key '..shiftModKey..' is already bound to action "'..shiftModBinding.name..'" under "'..shiftModBinding.category..'" category')
                 else
-                    WARN('Hotbuild key '..modKey..' is already bound to action "'..modBinding.name..'" under "'..modBinding.category..'" category')
+                    WARN('Hotbuild key '..shiftModKey..' is already bound to action "'..shiftModBinding.name..'" under "'..shiftModBinding.category..'" category')
+                    WARN('Hotbuild key '..altModKey..' is already bound to action "'..altModBinding.name..'" under "'..altModBinding.category..'" category')
                 end
             end
         end
@@ -350,7 +361,7 @@ end
 function GetShiftAction(actionName, category)
     local keyActions = GetKeyActions()
     local keyLookup = GetKeyLookup()
-     
+
     local name = 'shift_' .. actionName
     local action = keyActions[name]
     if action  and action.category == category then

@@ -157,7 +157,7 @@ function SetupSession()
         ScenarioInfo.BuildRestrictions = buildRestrictions
     end
 
-    if table.getsize(enhRestrictions) > 0 then
+    if not table.empty(enhRestrictions) then
         --table.print(enhRestrictions, 'enhRestrictions ')
         import('/lua/enhancementcommon.lua').RestrictList(enhRestrictions)
     end
@@ -186,7 +186,7 @@ function SetupSession()
 
     -- Preloads AI templates from AI mods
     AIModTemplatesPreloader()
-    
+
     ResetSyncTable()
 end
 
@@ -224,6 +224,17 @@ end
 function BeginSession()
     LOG('BeginSession...')
     SPEW('Active mods in sim: ', repr(__active_mods))
+
+    GameOverListeners = {}
+    ForkThread(function()
+        while not IsGameOver() do
+            WaitTicks(1)
+        end
+        for _, v in GameOverListeners do
+            v()
+        end
+    end)
+
     ForkThread(GameTimeLogger)
     local focusarmy = GetFocusArmy()
     if focusarmy>=0 and ArmyBrains[focusarmy] then

@@ -65,7 +65,7 @@ BuilderManager = Class {
         local sortedList = {}
         #Simple selection sort, this can be made faster later if we decide we need it.
         for i = 1, table.getn(self.BuilderData[bType].Builders) do
-            local highest = 0
+            local highest = -1
             local key, value
             for k, v in self.BuilderData[bType].Builders do
                 if v.Priority > highest then
@@ -227,7 +227,7 @@ BuilderManager = Class {
         end
         return false
     end,
-    
+
     -- We delay buildplatoons to give engineers the time to move and start building before we call this builder again.
     IsPlattonBuildDelayed = function(self, DelayEqualBuildPlattons)
         if DelayEqualBuildPlattons then
