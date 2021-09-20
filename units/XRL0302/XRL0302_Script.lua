@@ -54,8 +54,21 @@ XRL0302 = Class(CWalkingLandUnit) {
 
         self.EffectsBag = {}
         self.AmbientExhaustEffectsBag = {}
-        self.CreateTerrainTypeEffects(self, self.IntelEffects.Cloak, 'FXIdle',  self:GetCurrentLayer(), nil, self.EffectsBag)
+        self.CreateTerrainTypeEffects(self, self.IntelEffects.Cloak, 'FXIdle',  self.Layer, nil, self.EffectsBag)
         self.PeriodicFXThread = self:ForkThread(self.EmitPeriodicEffects)
+    end,
+
+    OnStopBeingBuilt = function(self, builder, layer)
+        CWalkingLandUnit.OnStopBeingBuilt(self, builder, layer)
+        --LOG('IEXIST')
+        self:ForkThread(self.HideUnit, self)
+        --self:SetMesh(self:GetBlueprint().Display.CloakMeshBlueprint, true)
+    end,
+
+    HideUnit = function(self)
+        WaitTicks(1)
+        --LOG('IEXIST3', self:GetBlueprint().Display.CloakMeshBlueprint)
+        self:SetMesh(self:GetBlueprint().Display.CloakMeshBlueprint, true)
     end,
 
     -- Allow the trigger button to blow the weapon, resulting in OnKilled instigator 'nil'
@@ -117,8 +130,9 @@ XRL0302 = Class(CWalkingLandUnit) {
     
     OnDestroy = function(self)
         CWalkingLandUnit.OnDestroy(self)
-        self:DoDeathWeapon()
     end,
+
+ 
 }
 
 TypeClass = XRL0302

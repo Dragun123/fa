@@ -113,7 +113,7 @@ UnitBlueprint {
     CollisionOffsetZ = 0.5,
     Defense = {
         AirThreatLevel = 40,
-        ArmorType = 'Normal',
+        ArmorType = 'Experimental',
         EconomyThreatLevel = 0,
         Health = 40000,
         MaxHealth = 40000,
@@ -438,8 +438,10 @@ UnitBlueprint {
             TargetCheckInterval = 1,
             TargetPriorities = {
                 'SUBMERSIBLE',
+                'TECH2 LIGHTBOAT',
                 '(STRUCTURE * DEFENSE - ANTIAIR)',
                 '(TECH2 * MOBILE * NAVAL - CRUISER)',
+                'ANTINAVY',
                 'MOBILE',
                 '(ALLUNITS - SPECIALLOWPRI)',
             },

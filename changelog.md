@@ -1,3 +1,368 @@
+Patch 3723 (19 September, 2021)
+============================
+- Fixed a bug preventing from spawning the wreck of some experimentals
+
+### Contributors
+- Jip
+
+Patch 3722 (19 September, 2021)
+============================
+### Lobby
+- Updated balance patchnotes link
+
+### Bugs
+- Fixed featured mod not working
+
+### Performances
+- Optimize default explosion
+
+### Other
+- Allowed custom vault path
+
+### Contributors
+- Jip
+- KionX
+- keyser
+
+Patch 3721 (19 September, 2021)
+============================
+### Lobby
+- Improved visibility of balance patchnotes
+- Improved CPU benchmark to take into account RAM
+- Removed large map preview when map preview is hidden (map generator)
+- Prevented kyros lobby from displaying spawn location when map preview is hidden (map generator)
+- Fixed ACU display in large map preview
+- Fixed the link for curated map button
+
+### Gameplay
+- Removed reclaim rate from scoreboard mass income
+- Added decals on a lot of projectiles impact and tree falling effect for aesthetics
+- Added feature : preselection of mex when selection engineer and hovering the cursor over a mass spot
+- Allowed battleship/battlecruiser to render their weapon reload bar
+- Speed up Aeon static shields death animation to match other faction
+- Added a hotkey for dock
+- Made sonars more reliable to hit
+
+### Bugs
+- Fixed game resulting in draw when it should not
+- Fixed units doing some friendlyfire and inaccurate damage
+- Fixed Cybran ACU sonar that was working without the torpedo upgrade
+- Fixed unit cap display in coop
+- Fixed some UI scaling issues
+- Fixed game ID displayed in the scoreboard
+- Fixed a warning with shield overspill function
+- Fixed a bug happening when engies were not able to build
+- Fixed some warnings due to lava trees missing textures
+- Fixed aoe damage not working properly on build drones
+- Fixed hotkey not working with Seraphim SACU in buildmode
+
+### Performances
+- Optimized cybran build effects and reduced the number of drones spawned by hives
+- Code optimisation related to weapons
+- Call to faster function
+- Improved UEF build beam logic
+- Simplified Seraphim flash effect at finished structure
+- Simplified UEF static shield build effect
+- Optimized math calculations
+- Optimized function to generate random numbers
+- Optimized logic for structure rotation toward enemies (for point defenses, artillery)
+- Optimized HQ logic
+- Prefetch data in the lobby to speed up loading screen
+- Removed unused code which aimed to rock boats
+- Optimized the access to the current layer of a unit
+- Optimized trashbag
+- Benchmark tool for developper allowing to evaluate easily code impact on performances
+
+### AI
+- Fixed a bug preventing AI from firing nukes from Aeon SML
+- Fixed AI's ACU upgrade in coop
+- Fixed arty range issues with AI
+- Removed unused code for AI
+- Improved description of AI code
+- Fixed AI platoon function
+- Fixed AI game result
+
+### Other
+- Improved and more visible weather
+- Added new props for maps
+- Display beetle as cloacked for the owner
+- Removed duplicates of adjacency visual effects
+- Added field engineer icon to Cybran/Seraphim/Aeon, so it display in case they possess one.
+- Updated loading tips
+- Prevented observers from pinging
+- Prevented sending resources to enemies
+- Fixed tooltip to support experimental transporter
+- Improved code style consistency
+- Fixed chrono dampner and RAS description
+- Removed Aquatic tag from T3 UEF maa
+- Fixed the visual of several cybran unit's weapon
+- Added old patchnotes changes until the version 3636
+- Test code with FAF lua language
+- Better naming of T3 maa unit folders
+- Small refactoring with regard to taunts
+- Add textures for map generator
+
+### Contributors
+- Jip
+- Uveso
+- speed2
+- KionX
+- Sheikah
+- KeyBlue
+- Relent0r
+- Dragun
+- Askaholic
+- Madmax
+- Tagada
+- FemtoZetta
+- Rowey
+- Divran
+- Timocov
+- Melanol
+- Benzi-Junior
+- slinkingant
+- WhenDayBreaks
+- SnaggleFox
+- keyser
+
+Patch 3720 (14 May, 2021)
+============================
+- Land
+    - Tech 1 Land
+        - Mantis
+            - Icon changed from a LAB icon to that of a T1 tank
+        - Sky Slammer
+            - Increase of projectile velocity and projectile lifetime vs air units
+        - Selen
+            - Range: 18 → 19
+            - TurretYawSpeed 120: → 130
+- Air
+    - Tech 1 Air
+        - Jester
+            - Speed: 9 → 10
+            - MuzzleVelocity: 40 → 55
+            - DamageRadius: 0 → 0.15
+        - T1 Bombers
+            - Radar radius: 42 → 44
+- Navy
+    - Tech 1 Navy
+        - Shard
+            - Damage: 7 → 6
+            - MuzzleVelocity: 45 → 60
+- Structures
+    - Mexes
+        - T1 Mexes
+            - BuildPower: 13 → 10
+        - T2 Mexes
+            - BuildPower: 20.58 → 15
+            - BuildTime: 1171 → 900
+        - T3 Mexes
+            - BuildTime: 3944 → 2875
+- Miscellaneous
+    - Unit Target Priorities
+         - Revert ACUs to previous targeting behavior of having no preference between various units
+         - Cruisers now target navy before structures again
+         - Subs target other subs before coopers
+    - Overcharge
+        - Overcharge kills mobile land shield generators if it depletes its shield on impact (only a single one, overspilled ones live). Veterancy counted, no reclaim left.
+    - Artillery damage
+        - Fixed T2 aeon artillery dealing double damage and zthuee & lobo dealing 10 more damage per shot
+### Contributors
+- Petricpwnz
+- Tagada
+- keyser
+
+Hotfix 3719 (2 December, 2020)
+============================
+- Reverted previous change breaking Sorian AI
+
+Patch 3718 (29 November, 2020)
+============================
+- Land
+    - Tech 1 Land
+        - Aurora
+            - Mass Cost: 52 → 54
+            - Power Cost: 260 → 270
+            - Build Time: 260 → 270
+            - Health: 140 → 155
+            - Speed: 2.9 → 3
+            - RateOfFire: 0.66 → 0.6
+        - Mantis
+            - Mass Cost: 52 → 56
+            - Build Time: 260 → 265
+        - Flare
+            - Mass Cost: 35 → 42
+            - Power Cost: 140 → 165
+            - Build Time: 120 → 140
+            - Health: 70 → 115
+            - Speed: 4 → 3.8
+            - Damage: 7 → 9        
+        - Hunter
+            - Health: 65 → 90         
+        - Mech Marine
+            Mass Cost: 35 → 30
+            Power Cost: 120 → 100
+            Build Time: 120 → 100
+            Health: 75 → 60
+            Speed: 4 → 4.2
+            Turnrate: 45 → 50
+            TurretYawSpeed: 180 → 200
+        - Selen
+            Build Time: 80 → 90
+            Speed: 4 → 3.8
+            Range: 16 → 18
+            Turret SlavedToBody: True → False
+            TurretYawRange: 30 → 360
+            TurretYawSpeed: 180 → 120
+    - Tech 2 Land
+        - Mongoose
+            - MaxSpeed: 3.2 → 2.8
+        - Hoplite
+            - MaxSpeed: 3.6 → 3.3
+        - Asylum
+            - Energy maintenance: 35 → 45
+        - Parashield
+            - Energy maintenance: 60 → 80
+            - MaxSpeed: 4 → 3.5
+        - Air scout
+            - Power Cost: 420 → 580
+            - Build Time: 145 → 200
+            
+- Air
+    - Tech 1 Air
+        - T1 bomber
+            - Mass cost: 105 → 90
+            - Energy cost: 2450 → 2050
+            - Build time: 700 → 500
+            - BreakOffDistance: 24 → 32
+            - RadarRadius: 0 → 42
+        - Jester
+            - Mass cost: 200 → 170
+            - Energy cost: 5000 → 4250
+            - Build time: 1000 → 850
+            - Health: 525 → 350
+            - MaxSpeed: 12 → 9
+            - Damage: 16 → 15
+- Structures
+    - Flood XR
+        - Sonar Stealth: 90 → 70
+        - Radar Stealth: 45 → 70
+    - Yolona-Oss
+        - The Yolona-Oss has its animation reduced to increase the speed of its firing cycle. It also explodes like other strategic missile launchers when killed. 
+    - Death Weapon
+        - Inner Ring Damage: 20000
+        - Inner Ring Radius: 15
+        - Outer Ring Damage: 5000
+        - Outer Ring Radius: 20
+        - WeaponRepackTimeout: 32.5 → 20
+- Miscellaneous
+    - Overcharge
+        - Overcharge is changed from a variable system to a fixed damage per energy used. The ratio is 1:4 damage to energy drained and the minimum damage is 1250, maintaining the minimum energy required to Overcharge at 5k.
+        - The damage dealt by overcharge scales with the amount of energy drained from storage.
+        - Overcharge will use as much energy as is needed to kill the highest health unit hit
+        - The minimum damage is 1250 at a cost of 5k energy.
+        - The maximum damage is 15k at a cost of 60k energy.
+        - Overcharge will drain a maximum of 90% of stored energy.
+        - Damage vs buildings and vs commanders is unchanged from the previous system.
+    - Target Priorities
+        - Many units had their target priorities updated to enabled them to function more effectively. Find all the details here: https://github.com/FAForever/fa/pull/3072
+    - Experimental Nuclear Missile
+        - Health: 60 → 60000
+    - Nuclear Missile
+        - Health: 25 → 25000
+    - Anti-nuke missile
+        - Damage: 30 → 30000
+    - Air Factory Rolloff
+        - Air factory rolloff times have been equalised between factions.
+    - T3 Air Crash Damage
+        - The crash damage of T3 air units has been increased and made more consistent.
+    - Fixed the vision effects of Lobos and Seraphim air scouts
+    
+- Game Patch
+    - hide ressources on game preview for generated hidden maps
+    - allow AI to build assist factories
+    
+### Contributors
+- keyser
+- speed2
+- JaggedAppliance
+- Petricpwnz
+- Kazbek
+- KionX
+- Sheikah
+- Azraeel
+
+Hotfix 3717 (13 September, 2020)
+============================
+- Fixed coop not working
+- Fixed all games being unrated
+
+### Contributors
+- KionX
+- Askaholic
+
+Hotfix 3716 (12 September, 2020)
+============================
+- Fixed cybran arty explosion when hitting shields
+
+### Contributors
+- keyser
+
+Patch 3715 (12 September, 2020)
+============================
+### Lobby
+- Allowed single player lobby to get the features from the multiplayer lobby
+- Adapted autolobby for team matchmaker
+- Improved russian translation of the lobby
+
+### Gameplay
+- Added an alternative hotkey layout using cycle when building unit in factory
+- Added a hotkey to access factory template (unit queue template in factory)
+- Allowed to bind action to the "chevron" key
+- Improved AI
+- Prevented reclaim from cancelling death animation when the unit is killed by a shot (doesn\'t apply to volatile structure)
+- Added experimental armor to air/navy/structure experimental
+- Removed beetle armor
+
+### Bugs
+- Fixed bigger strat icons
+- Fixed the eye of Rhianne giving permanent vision underwater
+- Fixed explosion decals spawn when structure dies
+- Fixed chat and minimap repositionning when resizing the game
+- Fixed explosion killing trees
+- Fixed explosion decals spawn with arty/bomber projectiles
+- Fixed mermaid torpedo hitbox
+- Fixed game slowdown on long AI games
+- Fixed wrong game rating reward
+- Fixed lag watching replay at fast speed and improved ingame performances
+- Fixed wreckages\' hitbox positionning
+
+### Other
+- Improved unit description in game
+- Updated resource structure description
+- Improved usability of the cheat menu
+- Allowed cheat menu to spawn modded unit
+- Improved the loading tips
+- Moved faction data out of the functions
+- Added topological sorting for mods
+- Added shaders for the SCTA
+- Improved scripted army movement
+
+### Contributors
+- KionX
+- speed2
+- BlackYps
+- The-Balthazar
+- keyser
+- Uveso
+- Askaholic
+- AugSphere
+- FemtoZetta
+- Dragun123
+- ugandarowanda
+- Jip
+- Kazbek
+
 Patch 3714 (3 May, 2020)
 ============================
 - Land
@@ -257,7 +622,7 @@ Patch 3714 (3 May, 2020)
 
 Patch 3713 (7 April, 2020)
 ============================
-- Fix a bug allowing to generate resources for free
+- Fixed a bug allowing to generate resources for free
 
 ### Contributors ###
 - speed2
@@ -1943,7 +2308,7 @@ Patch 3675 (5th February, 2017)
 
 Patch 3674 (5th February, 2017)
 ============================
-http://content.faforever.com/patchnotes/3674.html
+http://patchnotes.faforever.com/3674.html
 
 ### Lobby
 - Use default map from file. This allows coop, tutorials, and other mods to have an easier time
@@ -2976,7 +3341,7 @@ Patch 3652 (May 2, 2016)
 
 Patch 3650 (August 19, 2015)
 ===========================
-HTML-version of this balance oriented changelog available at: http://content.faforever.com/patchnotes/
+HTML-version of this balance oriented changelog available at: http://patchnotes.faforever.com/
 
 ### Seraphim and UEF ACU TML
 - Missile hitpoints: 3 hp → 2 hp

@@ -16,11 +16,12 @@ local Button = import('/lua/maui/button.lua').Button
 local Tooltip = import('/lua/ui/game/tooltip.lua')
 local TooltipInfo = import('/lua/ui/help/tooltips.lua')
 local Prefs = import('/lua/user/prefs.lua')
-local CM = import('/lua/ui/game/commandmode.lua')
 local UIMain = import('/lua/ui/uimain.lua')
 local Select = import('/lua/ui/game/selection.lua')
 local EnhancementQueue = import('/lua/ui/notify/enhancementqueue.lua')
 local SetWeaponPriorities = import('/lua/keymap/misckeyactions.lua').SetWeaponPriorities
+local CommandMode = import('/lua/ui/game/commandmode.lua')
+local Construction = import('/lua/ui/game/construction.lua')
 
 controls = import('/lua/ui/controls.lua').Get()
 
@@ -174,9 +175,9 @@ end
 local function StandardOrderBehavior(self, modifiers)
     -- If we're checked, end the current command mode, otherwise start it
     if self:IsChecked() then
-        import('/lua/ui/game/commandmode.lua').EndCommandMode(true)
+        CommandMode.EndCommandMode(true)
     else
-        import('/lua/ui/game/commandmode.lua').StartCommandMode("order", {name=self._order})
+        CommandMode.StartCommandMode("order", {name=self._order})
     end
 end
 
@@ -256,7 +257,7 @@ local function AttackOrderInit(control, unitList)
     if not unitList[1] then
         return true
     end
-    
+
     --set up the icons that will be toggled on/off
     if not control.toggleModeIcon then
         control.toggleModeIcon = Bitmap(control, UIUtil.UIFile('/game/orders/toggle_red.dds'))
@@ -268,7 +269,7 @@ local function AttackOrderInit(control, unitList)
                 return true
             end
         end
-    end 
+    end
 
     if not control.mixedModeIcon then
         control.mixedModeIcon = Bitmap(control.toggleModeIcon, UIUtil.UIFile('/game/orders-panel/question-mark_bmp.dds'))
@@ -309,6 +310,10 @@ local function DockOrderBehavior(self, modifiers)
     self:SetCheck(false)
 end
 
+function Dock(clear)
+    IssueDockCommand(clear)
+end
+
 -- Used by orders that happen immediately and don't change the command mode (ie the stop button)
 local function MomentaryOrderBehavior(self, modifiers)
     IssueCommand(GetUnitCommandFromCommandCap(self._order))
@@ -330,7 +335,7 @@ function ClearCommands(units)
         EnhancementQueue.clearEnhancements(units)
         ForkThread(function() -- Wait a tick for the callback to do its job then refresh the UI to remove ghost enhancement orders
             WaitSeconds(0.1)
-            import('/lua/ui/game/construction.lua').RefreshUI()
+            Construction.RefreshUI()
         end)
 
         local ids = {}
@@ -345,7 +350,7 @@ end
 
 function SoftStop(units)
     local units = units or GetSelectedUnits()
-    import('/lua/ui/game/construction.lua').ResetOrderQueues(units)
+    Construction.ResetOrderQueues(units)
     ClearCommands(EntityCategoryFilterDown(categories.SILO, units))
     Stop(EntityCategoryFilterOut((categories.SHOWQUEUE * categories.STRUCTURE) + categories.FACTORY + categories.SILO, units))
 end
@@ -528,7 +533,7 @@ end
 
 local function AttackMoveBehavior(self, modifiers)
     if self:IsChecked() then
-        import('/lua/ui/game/commandmode.lua').EndCommandMode(true)
+        CommandMode.EndCommandMode(true)
     else
         local modeData = {
             name="RULEUCC_Script",
@@ -536,13 +541,13 @@ local function AttackMoveBehavior(self, modifiers)
             TaskName='AttackMove',
             cursor = 'ATTACK_MOVE',
         }
-        import('/lua/ui/game/commandmode.lua').StartCommandMode("order", modeData)
+        CommandMode.StartCommandMode("order", modeData)
     end
 end
 
 local function AbilityButtonBehavior(self, modifiers)
     if self:IsChecked() then
-        CM.EndCommandMode(true)
+        CommandMode.EndCommandMode(true)
     else
         local modeData = {
             name="RULEUCC_Script",
@@ -550,7 +555,7 @@ local function AbilityButtonBehavior(self, modifiers)
             TaskName=self._script,
             cursor = self._cursor,
         }
-        CM.StartCommandMode("order", modeData)
+        CommandMode.StartCommandMode("order", modeData)
     end
 end
 
@@ -800,11 +805,11 @@ function CycleRetaliateStateUp()
 end
 
 local function pauseFunc()
-    import('/lua/ui/game/construction.lua').EnablePauseToggle()
+    Construction.EnablePauseToggle()
 end
 
 local function disPauseFunc()
-    import('/lua/ui/game/construction.lua').DisablePauseToggle()
+    Construction.DisablePauseToggle()
 end
 
 local function NukeBtnText(button)
@@ -1181,17 +1186,17 @@ local function CreateCommonOrders(availableOrders, init)
     end
 
     local units = {}
-    if currentSelection and table.getn(currentSelection) > 0 then
+    if currentSelection and not table.empty(currentSelection) then
         for _, unit in currentSelection do
             if not IsDestroyed(unit) then
                 table.insert(units, unit)
             end
         end
     end
-    if units and table.getn(units) > 0 and EntityCategoryFilterDown(categories.MOBILE - categories.STRUCTURE, units) then
+    if units and not table.empty(units) and EntityCategoryFilterDown(categories.MOBILE - categories.STRUCTURE, units) then
         for _, availOrder in availableOrders do
-            if (availOrder == 'RULEUCC_RetaliateToggle' and table.getn(EntityCategoryFilterDown(categories.MOBILE, units)) > 0)
-                    or table.getn(EntityCategoryFilterDown(categories.ENGINEER - categories.POD, units)) > 0 then
+            if (availOrder == 'RULEUCC_RetaliateToggle' and not table.empty(EntityCategoryFilterDown(categories.MOBILE, units)))
+                    or not table.empty(EntityCategoryFilterDown(categories.ENGINEER - categories.POD, units)) then
                 orderCheckboxMap['AttackMove']:Enable()
                 break
             end
@@ -1226,11 +1231,11 @@ local function CreateAltOrders(availableOrders, availableToggles, units)
 
     local assitingUnitList = {}
     local podUnits = {}
-    if table.getn(units) > 0 and (EntityCategoryFilterDown(categories.PODSTAGINGPLATFORM, units) or EntityCategoryFilterDown(categories.POD, units)) then
+    if not table.empty(units) and (EntityCategoryFilterDown(categories.PODSTAGINGPLATFORM, units) or EntityCategoryFilterDown(categories.POD, units)) then
         local PodStagingPlatforms = EntityCategoryFilterDown(categories.PODSTAGINGPLATFORM, units)
         local Pods = EntityCategoryFilterDown(categories.POD, units)
         local assistingUnits = {}
-        if table.getn(PodStagingPlatforms) == 0 and table.getn(Pods) == 1 then
+        if table.empty(PodStagingPlatforms) and table.getn(Pods) == 1 then
             assistingUnits[1] = Pods[1]:GetCreator()
             podUnits['DroneL'] = Pods[1]
             podUnits['DroneR'] = Pods[2]
@@ -1459,7 +1464,7 @@ function SetAvailableOrders(availableOrders, availableToggles, newSelection)
     end
 
     controls.orderButtonGrid:EndBatch()
-    if table.getn(currentSelection) == 0 and controls.bg.Mini then
+    if table.empty(currentSelection) and controls.bg.Mini then
         controls.bg.Mini(true)
     elseif controls.bg.Mini then
         controls.bg.Mini(false)
@@ -1527,7 +1532,7 @@ function SetupOrdersControl(parent, mfd)
     SetLayout(UIUtil.currentLayout)
 
     -- Setup command mode behaviors
-    import('/lua/ui/game/commandmode.lua').AddStartBehavior(
+    CommandMode.AddStartBehavior(
         function(commandMode, data)
             local orderCheckbox = orderCheckboxMap[data]
             if orderCheckbox then
@@ -1535,7 +1540,7 @@ function SetupOrdersControl(parent, mfd)
             end
         end
 )
-    import('/lua/ui/game/commandmode.lua').AddEndBehavior(
+    CommandMode.AddEndBehavior(
         function(commandMode, data)
             local orderCheckbox = orderCheckboxMap[data]
             if orderCheckbox then
