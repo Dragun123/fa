@@ -5,9 +5,14 @@
 -- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 local Projectile = import('/lua/sim/Projectile.lua').Projectile
+local DummyProjectile = import('/lua/sim/Projectile.lua').DummyProjectile
 local UnitsInSphere = import('/lua/utilities.lua').GetTrueEnemyUnitsInSphere
 local GetDistanceBetweenTwoEntities = import('/lua/utilities.lua').GetDistanceBetweenTwoEntities
 local OCProjectiles = {}
+
+-- shared between sim and ui
+local OverchargeShared = import('/lua/shared/overcharge.lua')
+
 -----------------------------------------------------------------
 -- Null Shell
 -----------------------------------------------------------------
@@ -303,15 +308,80 @@ OnWaterEntryEmitterProjectile = Class(Projectile) {
 -----------------------------------------------------------------
 -- GENERIC DEBRIS PROJECTILE
 -----------------------------------------------------------------
-BaseGenericDebris = Class(EmitterProjectile){
-    FxUnitHitScale = 0.25,
-    FxWaterHitScale = 0.25,
-    FxUnderWaterHitScale = 0.25,
-    FxNoneHitScale = 0.25,
-    FxImpactLand = false,
-    FxLandHitScale = 0.5,
-    FxTrails = false,
-    FxTrailScale = 1,
+
+-- upvalued for performance
+local CreateEmitterAtBone = CreateEmitterAtBone
+local CreateEmitterAtEntity = CreateEmitterAtEntity
+local GetTerrainType = GetTerrainType
+
+-- upvalued read-only values
+local DefaultTerrainTypeFxImpact = GetTerrainType(-1, -1).FXImpact
+
+-- moho functions for performance
+local EntityMethods = _G.moho.entity_methods
+local EntityDestroy = EntityMethods.Destroy
+local EntityPlaySound = EntityMethods.PlaySound
+local EntityGetBlueprint = EntityMethods.GetBlueprint
+local EntityGetPositionXYZ = EntityMethods.GetPositionXYZ
+
+local EmitterMethods = _G.moho.IEffect
+local EmitterScaleEmitter = EmitterMethods.ScaleEmitter
+
+BaseGenericDebris = Class(DummyProjectile){
+
+    OnImpact = function(self, targetType, targetEntity)
+
+        -- cache values
+        local blueprint = EntityGetBlueprint(self)
+        local blueprintDisplayImpactEffects = blueprint.Display.ImpactEffects
+        local impactEffectType = blueprintDisplayImpactEffects.Type or 'Default'
+
+        -- determine sound value
+        local impactSnd = "Impact"
+        if targetType == 'Terrain' then
+            impactSnd = "ImpactTerrain"
+        elseif targetType == 'Water' then
+            impactSnd = "ImpactWater"
+        end
+        
+        -- play impact sound
+        local snd = blueprint.Audio[impactSnd]
+        if snd then 
+            EntityPlaySound(self, snd)
+        end
+
+        -- Inlined GetTerrainEffects --
+
+        -- get x / z position
+        local x, _, z = EntityGetPositionXYZ(self)
+
+        -- get terrain at that location and try and get some effects
+        local terrainTypeFxImpact = GetTerrainType(x, z).FXImpact
+        local terrainEffects = terrainTypeFxImpact[targetType][impactEffectType] or DefaultTerrainTypeFxImpact[targetType][impactEffectType] or false
+
+        -- Inlined CreateTerrainEffects --
+
+        -- check if table exists, can be set to false
+        if terrainEffects then 
+
+            -- store values in cache
+            local emit = false
+            local army = self.Army 
+            local effectScale = blueprintDisplayImpactEffects.Scale or 1
+
+            for _, v in terrainEffects do
+
+                -- create emitter and scale accordingly
+                emit = CreateEmitterAtBone(self, -2, army, v)
+                if effectScale != 1 then
+                    EmitterScaleEmitter(emit, effectScale)
+                end
+            end
+        end
+
+        -- destroy ourselves :(
+        EntityDestroy(self)
+    end,
 }
 
 -----------------------------------------------------------
@@ -434,15 +504,12 @@ OverchargeProjectile = Class() {
         end
     end,
 
-    -- y = 3000e^(0.000095(x+15500))-10090 = old values
-    -- y = 4x = new values
-    -- https://www.desmos.com/calculator/ap0kazbdp0
     DamageAsEnergy = function(self, damage)
-        return damage * 4
+        return OverchargeShared.DamageAsEnergy(damage)
     end,
 
     EnergyAsDamage = function(self, energy)
-        return energy / 4
+        return OverchargeShared.EnergyAsDamage(energy)
     end,
 
     UnitsDetection = function(self, targetType, targetEntity)
